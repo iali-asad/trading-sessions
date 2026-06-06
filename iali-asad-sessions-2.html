@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade With iali_asad · Session Clock</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Exo+2:wght@200;300;400;500;600&family=Aldrich&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep:    #010206;
+  --bg-mid:     #03060f;
+  --bg-card:    rgba(5, 12, 25, 0.82);
+  --gold:       #c9a84c;
+  --gold-lt:    #f0d080;
+  --gold-dim:   rgba(201,168,76,0.15);
+  --gold-glow:  rgba(201,168,76,0.35);
+  --amber:      #e8a020;
+  --cyan:       #00e5ff;
+  --cyan-dim:   rgba(0,229,255,0.1);
+  --green:      #00ff9d;
+  --green-dim:  rgba(0,255,157,0.1);
+  --red:        #ff2d55;
+  --red-dim:    rgba(255,45,85,0.1);
+  --yellow:     #ffc300;
+  --text:       #b8cce0;
+  --text-dim:   rgba(160,195,220,0.45);
+  --text-bright:#ffffff;
+  --border:     rgba(201,168,76,0.1);
+  --border-mid: rgba(201,168,76,0.22);
+  --border-hi:  rgba(201,168,76,0.45);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── BACKGROUND LAYERS ── */
+.bg-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+
+/* Deep starfield */
+.bg-stars {
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(201,168,76,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 30%, rgba(201,168,76,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 80%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 20%, rgba(201,168,76,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 75%, rgba(201,168,76,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 88%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 45%, rgba(201,168,76,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 5%, rgba(255,255,255,0.35) 0%, transparent 100%);
+}
+
+/* Radial orb top-center */
+.bg-orb-top {
+  top: -25%; left: 50%; transform: translateX(-50%);
+  width: 80%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(201,168,76,0.055) 0%, rgba(201,168,76,0.02) 40%, transparent 75%);
+}
+
+/* Subtle diagonal grid */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Bottom vignette */
+.bg-vignette {
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(1,2,6,0.7) 100%);
+}
+
+/* ── SCROLLING LINES ── */
+.scanline-wrap {
+  position: fixed; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; z-index: 1; overflow: hidden;
+}
+.scanline {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.12) 30%, rgba(201,168,76,0.22) 50%, rgba(201,168,76,0.12) 70%, transparent 100%);
+  animation: scan-move 8s linear infinite;
+}
+@keyframes scan-move {
+  from { top: -2px; }
+  to   { top: 100%; }
+}
+
+/* ── PAGE WRAP ── */
+.page {
+  position: relative; z-index: 2;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 18px 80px;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  text-align: center;
+  padding: 52px 0 36px;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Decorative corner ornaments */
+.ornament {
+  position: absolute;
+  width: 40px; height: 40px;
+  opacity: 0.45;
+}
+.ornament-tl { top: 40px; left: 0; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+.ornament-tr { top: 40px; right: 0; border-top: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+
+.hero-eyebrow {
+  font-family: 'Aldrich', monospace;
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  opacity: 0.8;
+  animation: fade-down 0.8s ease both;
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 7vw, 58px);
+  font-weight: 900;
+  color: var(--text-bright);
+  letter-spacing: 2px;
+  line-height: 1.05;
+  margin-bottom: 6px;
+  animation: fade-down 0.8s 0.1s ease both;
+  text-shadow: 0 0 60px rgba(201,168,76,0.25);
+}
+
+.hero-title .gold-word {
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-owner {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3vw, 18px);
+  font-weight: 400;
+  letter-spacing: 4px;
+  color: var(--gold);
+  margin-bottom: 10px;
+  animation: fade-down 0.8s 0.2s ease both;
+  opacity: 0.85;
+}
+
+.hero-tagline {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  animation: fade-down 0.8s 0.3s ease both;
+  margin-bottom: 22px;
+}
+
+/* Notification button */
+.notif-row {
+  display: flex;
+  justify-content: center;
+  animation: fade-down 0.8s 0.4s ease both;
+}
+
+.notif-btn {
+  background: transparent;
+  border: 1px solid var(--border-mid);
+  color: var(--gold);
+  font-family: 'Aldrich', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 9px 22px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold-dim);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.notif-btn:hover::before { transform: scaleX(1); }
+.notif-btn:hover { border-color: var(--border-hi); box-shadow: 0 0 18px var(--gold-glow); }
+.notif-btn span { position: relative; z-index: 1; }
+.notif-btn.granted { color: var(--green); border-color: rgba(0,255,157,0.3); }
+.notif-btn.denied  { color: var(--red);   border-color: rgba(255,45,85,0.3); cursor:not-allowed; }
+
+@keyframes fade-down {
+  from { opacity:0; transform:translateY(-16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 28px 0 20px;
+}
+.divider-line { flex:1; height:1px; background: var(--border); }
+.divider-gem {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--gold-glow);
+  flex-shrink: 0;
+}
+.divider-text {
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+/* ── LIVE CLOCK ── */
+.clock-wrap {
+  margin: 28px 0 24px;
+  text-align: center;
+  animation: fade-down 0.9s 0.5s ease both;
+}
+
+.clock-card {
+  display: inline-block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-mid);
+  border-radius: 4px;
+  padding: 32px 48px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 60px rgba(201,168,76,0.06),
+    0 0 120px rgba(201,168,76,0.03),
+    inset 0 1px 0 rgba(201,168,76,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.4);
+  width: 100%;
+  max-width: 700px;
+}
+
+/* Corner brackets on clock */
+.clock-card::before, .clock-card::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+}
+.clock-card::before { top: 8px; left: 8px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); opacity: 0.5; }
+.clock-card::after  { bottom: 8px; right: 8px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); opacity: 0.5; }
+
+.clock-pkt-label {
+  font-family: 'Aldrich', monospace;
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.75;
+}
+
+.clock-time {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(46px, 11vw, 80px);
+  font-weight: 900;
+  color: var(--text-bright);
+  letter-spacing: 6px;
+  line-height: 1;
+  margin-bottom: 12px;
+  text-shadow:
+    0 0 30px rgba(201,168,76,0.3),
+    0 0 80px rgba(201,168,76,0.1);
+}
+
+.clock-time .ampm {
+  font-size: 0.38em;
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px;
+  vertical-align: middle;
+}
+
+.clock-time .colon {
+  color: var(--gold);
+  animation: colon-blink 1s step-end infinite;
+  display: inline-block;
+}
+@keyframes colon-blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+.clock-date {
+  font-family: 'Aldrich', monospace;
+  font-size: clamp(12px, 2.5vw, 15px);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* ── TOP STATUS ROW ── */
+.status-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media(max-width:580px){ .status-row { grid-template-columns:1fr; } }
+
+.status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  transition: box-shadow 0.4s;
+}
+
+.status-card.s-active-card {
+  border-color: rgba(0,255,157,0.2);
+  background: linear-gradient(145deg, rgba(0,255,157,0.04), var(--bg-card));
+  box-shadow: 0 0 40px rgba(0,255,157,0.05);
+}
+
+.status-card.s-next-card {
+  border-color: rgba(201,168,76,0.22);
+  background: linear-gradient(145deg, rgba(201,168,76,0.05), var(--bg-card));
+  box-shadow: 0 0 40px rgba(201,168,76,0.05);
+}
+
+/* Top accent line */
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+}
+.s-active-card::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.s-next-card::before   { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+.sc-eyebrow {
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.s-active-card .sc-eyebrow { color: var(--green); }
+.s-next-card .sc-eyebrow   { color: var(--gold); }
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,255,157,0.4);
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%,100% { transform:scale(1); opacity:1; }
+  50%      { transform:scale(1.6); opacity:0.5; }
+}
+
+.sc-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(16px, 3.5vw, 22px);
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.sc-sub {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.sc-timer {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(24px, 5.5vw, 36px);
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+.s-active-card .sc-timer { color: var(--green); text-shadow: 0 0 20px rgba(0,255,157,0.35); }
+.s-next-card .sc-timer   { color: var(--gold-lt); text-shadow: 0 0 20px rgba(201,168,76,0.4); }
+
+.sc-timer-label {
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── OVERLAP BANNER ── */
+.overlap {
+  margin-bottom: 16px;
+  border-radius: 3px;
+  border: 1px solid;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  backdrop-filter: blur(16px);
+  transition: all 0.5s;
+  position: relative;
+  overflow: hidden;
+}
+
+.overlap::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  transition: opacity 0.4s;
+}
+
+.overlap.ov-active {
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(224,160,32,0.04), rgba(0,229,255,0.04));
+  border-color: rgba(201,168,76,0.4);
+  box-shadow: 0 0 50px rgba(201,168,76,0.1), 0 0 100px rgba(201,168,76,0.04);
+  animation: ov-glow 2.5s ease-in-out infinite;
+}
+.overlap.ov-active::before { background: linear-gradient(90deg, transparent, var(--gold), var(--amber), transparent); }
+
+@keyframes ov-glow {
+  0%,100% { box-shadow: 0 0 50px rgba(201,168,76,0.1), 0 0 100px rgba(201,168,76,0.04); }
+  50%      { box-shadow: 0 0 70px rgba(201,168,76,0.18), 0 0 140px rgba(201,168,76,0.08); }
+}
+
+.overlap.ov-upcoming {
+  background: rgba(0,229,255,0.03);
+  border-color: rgba(0,229,255,0.15);
+}
+.overlap.ov-upcoming::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+
+.overlap.ov-ended {
+  background: rgba(5,12,25,0.6);
+  border-color: rgba(255,255,255,0.05);
+  opacity: 0.55;
+}
+
+.ov-icon { font-size: 30px; flex-shrink: 0; }
+
+.ov-body { flex: 1; }
+
+.ov-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(12px, 2.8vw, 16px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+.ov-active .ov-title    { color: var(--gold-lt); }
+.ov-upcoming .ov-title  { color: var(--cyan); }
+.ov-ended .ov-title     { color: var(--text-dim); }
+
+.ov-sub {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+
+.ov-timer-col { text-align: right; flex-shrink: 0; }
+
+.ov-timer {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 4vw, 26px);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.ov-active .ov-timer   { color: var(--gold-lt); text-shadow: 0 0 16px rgba(201,168,76,0.5); }
+.ov-upcoming .ov-timer { color: var(--cyan); }
+.ov-ended .ov-timer    { color: var(--text-dim); }
+
+.ov-timer-label {
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── SESSION GRID ── */
+.sessions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+@media(max-width:520px){ .sessions-grid { grid-template-columns:1fr; } }
+
+.sess-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 20px 18px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(14px);
+  transition: transform 0.2s, box-shadow 0.3s, border-color 0.3s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.sess-card:hover { transform: translateY(-3px); }
+
+/* State classes */
+.sess-card.ss-active {
+  border-color: rgba(0,255,157,0.25);
+  background: linear-gradient(155deg, rgba(0,255,157,0.05) 0%, var(--bg-card) 55%);
+  box-shadow: 0 0 30px rgba(0,255,157,0.06);
+}
+.sess-card.ss-soon {
+  border-color: rgba(255,195,0,0.28);
+  background: linear-gradient(155deg, rgba(255,195,0,0.05) 0%, var(--bg-card) 55%);
+}
+.sess-card.ss-closed {
+  border-color: rgba(255,45,85,0.1);
+  opacity: 0.7;
+}
+
+/* Top glow accent */
+.sess-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0; height:1.5px;
+  border-radius:3px 3px 0 0;
+}
+.ss-active::before  { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.ss-soon::before    { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.ss-closed::before  { background: linear-gradient(90deg, transparent, rgba(255,45,85,0.4), transparent); }
+
+/* Corner gem */
+.corner-gem {
+  position: absolute;
+  top: 12px; right: 14px;
+  width: 6px; height: 6px;
+  transform: rotate(45deg);
+  transition: all 0.3s;
+}
+.ss-active .corner-gem  { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.ss-soon .corner-gem    { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+.ss-closed .corner-gem  { background: rgba(255,45,85,0.5); }
+
+.sess-flag { font-size: 22px; margin-bottom: 8px; display: block; }
+
+.sess-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 3vw, 17px);
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+
+.sess-market {
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.sess-times {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.sess-time-blk { flex: 1; }
+
+.sess-time-lbl {
+  font-family: 'Aldrich', monospace;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sess-time-val {
+  font-family: 'Aldrich', monospace;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+/* Badge */
+.sess-badge {
+  display: inline-block;
+  font-family: 'Aldrich', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.badge-open   { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,255,157,0.2); }
+.badge-soon   { background: rgba(255,195,0,0.1); color: var(--yellow); border: 1px solid rgba(255,195,0,0.2); }
+.badge-closed { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.15); }
+
+.sess-countdown {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 3px;
+}
+.ss-active .sess-countdown  { color: var(--green); text-shadow: 0 0 15px rgba(0,255,157,0.3); }
+.ss-soon .sess-countdown    { color: var(--yellow); text-shadow: 0 0 12px rgba(255,195,0,0.3); }
+.ss-closed .sess-countdown  { color: var(--text-dim); }
+
+.sess-cd-label {
+  font-family: 'Aldrich', monospace;
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Progress bar */
+.sess-bar-wrap {
+  height: 2px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.sess-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+.ss-active .sess-bar  { background: linear-gradient(90deg, var(--gold), var(--green)); box-shadow: 0 0 6px rgba(0,255,157,0.5); }
+.ss-soon .sess-bar    { background: var(--yellow); width: 0% !important; }
+.ss-closed .sess-bar  { background: rgba(255,45,85,0.3); width: 100% !important; }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 44px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer-owner {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(13px, 3vw, 16px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, var(--gold-lt), var(--gold), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+
+.footer-tagline {
+  font-family: 'Aldrich', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.footer-pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill {
+  background: rgba(201,168,76,0.05);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 5px 14px;
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.pill b { color: var(--gold); font-weight: normal; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(201,168,76,0.025);
+  padding: 8px 0;
+  margin: 24px 0;
+}
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 40s linear infinite;
+  gap: 0;
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 36px;
+  font-family: 'Aldrich', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  border-right: 1px solid var(--border);
+  text-transform: uppercase;
+}
+.ticker-item .tgold { color: var(--gold); }
+.ticker-item .tgreen { color: var(--green); }
+
+/* ── TOAST ── */
+.toast-wrap {
+  position: fixed;
+  bottom: 24px; right: 20px;
+  z-index: 999;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 320px;
+}
+.toast {
+  background: rgba(3,6,15,0.97);
+  border: 1px solid var(--border-mid);
+  border-radius: 3px;
+  padding: 13px 16px;
+  font-size: 12px;
+  color: var(--text);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6), 0 0 20px rgba(201,168,76,0.08);
+  animation: tst-in 0.3s ease;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+}
+.toast strong {
+  display: block;
+  color: var(--gold);
+  font-family: 'Aldrich', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+@keyframes tst-in  { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
+@keyframes tst-out { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(24px)} }
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .clock-card { padding: 24px 20px; }
+  .hero { padding: 36px 0 26px; }
+  .ornament-tl, .ornament-tr { display:none; }
+}
+
+/* ── MARKET STATUS BAR ── */
+.mkt-status-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:3px; padding:14px 20px; margin-bottom:16px;
+  backdrop-filter:blur(16px); position:relative; overflow:hidden; flex-wrap:wrap;
+}
+.mkt-status-bar::before { content:''; position:absolute; top:0;left:0;right:0;height:1px; }
+.mkt-bar-open::before   { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+.mkt-bar-closed::before { background:linear-gradient(90deg,transparent,var(--red),transparent); }
+.mkt-left { display:flex; align-items:center; gap:14px; }
+.mkt-big-dot { width:14px;height:14px;border-radius:50%;flex-shrink:0;position:relative; }
+.mkt-big-dot::after { content:'';position:absolute;inset:-4px;border-radius:50%;animation:ring-pulse 1.8s ease-in-out infinite; }
+.dot-open  { background:var(--green);box-shadow:0 0 14px var(--green); }
+.dot-open::after { border:1px solid rgba(0,255,157,0.4); }
+.dot-closed { background:var(--red);box-shadow:0 0 10px var(--red); }
+.dot-closed::after { display:none; }
+@keyframes ring-pulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.8);opacity:0} }
+.mkt-status-label { font-family:'Aldrich',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px; }
+.mkt-status-val { font-family:'Cinzel',serif;font-size:clamp(16px,3.5vw,22px);font-weight:700;letter-spacing:1.5px; }
+.mkt-bar-open   .mkt-status-val { color:var(--green);text-shadow:0 0 18px rgba(0,255,157,0.4); }
+.mkt-bar-closed .mkt-status-val { color:var(--red);text-shadow:0 0 14px rgba(255,45,85,0.35); }
+.mkt-sessions-open { font-family:'Aldrich',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-dim);margin-top:3px; }
+.mkt-sessions-open b { color:var(--gold);font-weight:normal; }
+.mkt-right { display:flex;gap:10px;flex-wrap:wrap;align-items:center; }
+.mkt-mini-pill { display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:2px;font-family:'Aldrich',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;border:1px solid;white-space:nowrap; }
+.mpill-open   { background:var(--green-dim);color:var(--green);border-color:rgba(0,255,157,0.2); }
+.mpill-closed { background:var(--red-dim);color:var(--red);border-color:rgba(255,45,85,0.15);opacity:0.6; }
+.mpill-soon   { background:rgba(255,195,0,0.08);color:var(--yellow);border-color:rgba(255,195,0,0.2); }
+.mpill-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0; }
+.mpill-open   .mpill-dot { background:var(--green);box-shadow:0 0 5px var(--green); }
+.mpill-closed .mpill-dot { background:var(--red); }
+.mpill-soon   .mpill-dot { background:var(--yellow); }
+@media(max-width:640px){ .mkt-right{width:100%;justify-content:flex-start;} }
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="bg-layer bg-stars"></div>
+<div class="bg-layer bg-orb-top"></div>
+<div class="bg-layer bg-grid"></div>
+<div class="bg-layer bg-vignette"></div>
+<div class="scanline-wrap"><div class="scanline"></div></div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="ornament ornament-tl"></div>
+    <div class="ornament ornament-tr"></div>
+
+    <div class="hero-eyebrow">🇵🇰 Pakistan Standard Time · UTC+5</div>
+    <div class="hero-title">
+      <span class="gold-word">Session</span> Clock
+    </div>
+    <div class="hero-owner">Trade With iali_asad</div>
+    <div class="hero-tagline">Live Forex &amp; Gold Market Session Tracker · All Times PKT</div>
+
+    <div class="notif-row">
+      <button class="notif-btn" id="notifBtn" onclick="requestNotifs()">
+        <span id="notifIcon">🔔</span>
+        <span id="notifTxt">Enable Session Alerts</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- LIVE CLOCK -->
+  <div class="clock-wrap">
+    <div class="clock-card">
+      <div class="clock-pkt-label">🇵🇰 Live Pakistan Time</div>
+      <div class="clock-time" id="clkTime">
+        --<span class="colon">:</span>--<span class="colon">:</span>-- <span class="ampm">--</span>
+      </div>
+      <div class="clock-date" id="clkDate">Loading...</div>
+    </div>
+  </div>
+
+
+  <!-- MARKET STATUS BAR -->
+  <div class="mkt-status-bar mkt-bar-closed" id="mktBar">
+    <div class="mkt-left">
+      <div class="mkt-big-dot dot-closed" id="mktDot"></div>
+      <div>
+        <div class="mkt-status-label">Forex Market</div>
+        <div class="mkt-status-val" id="mktVal">Loading...</div>
+        <div class="mkt-sessions-open" id="mktSessions">Detecting sessions...</div>
+      </div>
+    </div>
+    <div class="mkt-right" id="mktPills"></div>
+  </div>
+
+  <!-- ACTIVE + NEXT -->
+  <div class="status-row">
+    <div class="status-card s-active-card">
+      <div class="sc-eyebrow">
+        <div class="live-dot" id="liveDot"></div>
+        <span>Active Session</span>
+      </div>
+      <div class="sc-name" id="actName">Scanning...</div>
+      <div class="sc-sub" id="actSub">Detecting session</div>
+      <div class="sc-timer" id="actTimer">--:--:--</div>
+      <div class="sc-timer-label" id="actTimerLbl">Closes in</div>
+    </div>
+    <div class="status-card s-next-card">
+      <div class="sc-eyebrow">⏳ <span>Next Session</span></div>
+      <div class="sc-name" id="nxtName">Calculating...</div>
+      <div class="sc-sub" id="nxtSub">Loading data</div>
+      <div class="sc-timer" id="nxtTimer">--:--:--</div>
+      <div class="sc-timer-label">Starts in</div>
+    </div>
+  </div>
+
+  <!-- OVERLAP -->
+  <div class="overlap" id="ovBanner">
+    <div class="ov-icon" id="ovIcon">⚡</div>
+    <div class="ov-body">
+      <div class="ov-title" id="ovTitle">London + New York Overlap</div>
+      <div class="ov-sub" id="ovSub">06:00 PM – 10:00 PM PKT · Maximum Liquidity Period</div>
+    </div>
+    <div class="ov-timer-col">
+      <div class="ov-timer" id="ovTimer">--:--:--</div>
+      <div class="ov-timer-label" id="ovLabel">Loading</div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-gem"></div>
+    <div class="divider-text">All Sessions · Pakistan Time</div>
+    <div class="divider-gem"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- SESSION GRID -->
+  <div class="sessions-grid" id="sessGrid"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-owner">✦ Trade With iali_asad ✦</div>
+    <div class="footer-tagline">Pakistan's Premier Session Clock</div>
+    <div class="footer-pills">
+      <div class="pill">📍 PKT <b>UTC+5</b></div>
+      <div class="pill">⏱ Updates <b>Every Second</b></div>
+      <div class="pill">🌍 <b>4</b> Sessions Tracked</div>
+      <div class="pill">⚡ LDN+NY Overlap <b>Monitored</b></div>
+      <div class="pill">🔔 <b>Push</b> Notifications</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toasts -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ──────────────────────────────────────────────
+//  SESSION CONFIG (PKT hours)
+// ──────────────────────────────────────────────
+const SESSIONS = [
+  { id:'sydney',  name:'Sydney',   full:'Sydney Session',        flag:'🇦🇺', mkt:'ASX · Pacific',   openH:3,  openM:0, closeH:12, closeM:0 },
+  { id:'tokyo',   name:'Tokyo',    full:'Asian / Tokyo Session', flag:'🇯🇵', mkt:'TSE · Asian',     openH:4,  openM:0, closeH:13, closeM:0 },
+  { id:'london',  name:'London',   full:'London Session',        flag:'🇬🇧', mkt:'LSE · European',  openH:13, openM:0, closeH:22, closeM:0 },
+  { id:'newyork', name:'New York', full:'New York Session',      flag:'🇺🇸', mkt:'NYSE · COMEX',    openH:18, openM:0, closeH:27, closeM:0 },
+];
+const OV = { openH:18, openM:0, closeH:22, closeM:0 };
+
+let notifPerm = 'default';
+const fired = {};
+
+// ──────────────────────────────────────────────
+//  TIME UTILS
+// ──────────────────────────────────────────────
+function pkt() {
+  const n = new Date();
+  return new Date(n.getTime() + n.getTimezoneOffset()*60000 + 5*3600000);
+}
+function minsOf(t) { return t.getHours()*60 + t.getMinutes(); }
+function secsOf(t) { return t.getHours()*3600 + t.getMinutes()*60 + t.getSeconds(); }
+function pad2(n) { return String(n).padStart(2,'0'); }
+function fmt(secs) {
+  if(secs<=0) return '00:00:00';
+  const h=Math.floor(secs/3600), m=Math.floor((secs%3600)/60), s=secs%60;
+  return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+}
+function fmt12(h,m) {
+  const p=h<12?'AM':'PM', h12=h===0?12:h>12?h-12:h;
+  return `${pad2(h12)}:${pad2(m)} ${p}`;
+}
+
+function sessState(t, s) {
+  const nowMin = minsOf(t), nowSec = secsOf(t);
+  const openMin = s.openH*60+s.openM;
+  const closeMin = s.closeH*60+s.closeM;
+  const overnight = closeMin > 1440;
+
+  let isActive = false;
+  if(overnight) isActive = nowMin >= openMin || nowMin < (closeMin-1440);
+  else           isActive = nowMin >= openMin && nowMin < closeMin;
+
+  const openSec  = s.openH*3600  + s.openM*60;
+  const closeSec = s.closeH*3600 + s.closeM*60;
+
+  let secsToOpen=0, secsToClose=0, progress=0;
+  if(isActive) {
+    if(overnight && t.getHours()<12) {
+      secsToClose = (s.closeH-24)*3600 + s.closeM*60 - nowSec;
+    } else {
+      secsToClose = closeSec - nowSec;
+      if(secsToClose<0 && overnight) secsToClose += 86400;
+    }
+    const dur = (s.closeH - s.openH)*3600 + (s.closeM - s.openM)*60;
+    const elapsed = nowSec - openSec;
+    progress = Math.min(100, Math.max(0, (elapsed/dur)*100));
+    if(overnight && elapsed<0) progress = Math.min(100,((elapsed+86400)/dur)*100);
+  } else {
+    secsToOpen = openSec - nowSec;
+    if(secsToOpen<0) secsToOpen += 86400;
+  }
+
+  const openingSoon = !isActive && secsToOpen <= 30*60;
+  return { isActive, secsToOpen, secsToClose, openingSoon, closingSoon: isActive && secsToClose<=30*60, progress };
+}
+
+// ──────────────────────────────────────────────
+//  BUILD DOM
+// ──────────────────────────────────────────────
+function buildGrid() {
+  document.getElementById('sessGrid').innerHTML = SESSIONS.map(s => `
+    <div class="sess-card" id="sc-${s.id}">
+      <div class="corner-gem"></div>
+      <span class="sess-flag">${s.flag}</span>
+      <div class="sess-name">${s.full}</div>
+      <div class="sess-market">${s.mkt}</div>
+      <div class="sess-times">
+        <div class="sess-time-blk">
+          <div class="sess-time-lbl">Open</div>
+          <div class="sess-time-val">${fmt12(s.openH,s.openM)}</div>
+        </div>
+        <div class="sess-time-blk">
+          <div class="sess-time-lbl">Close</div>
+          <div class="sess-time-val">${fmt12(s.closeH>23?s.closeH-24:s.closeH,s.closeM)}</div>
+        </div>
+      </div>
+      <div class="sess-badge" id="bdg-${s.id}">—</div>
+      <div class="sess-countdown" id="cd-${s.id}">--:--:--</div>
+      <div class="sess-cd-label" id="cdl-${s.id}">Loading</div>
+      <div class="sess-bar-wrap"><div class="sess-bar" id="pb-${s.id}" style="width:0%"></div></div>
+    </div>`).join('');
+}
+
+function buildTicker() {
+  const items = [
+    ...SESSIONS.map(s=>`<div class="ticker-item"><span class="tgold">◆ ${s.flag} ${s.full}</span> · ${fmt12(s.openH,s.openM)} – ${fmt12(s.closeH>23?s.closeH-24:s.closeH,s.closeM)} PKT</div>`),
+    `<div class="ticker-item"><span class="tgold">⚡ London + NY Overlap</span> · 06:00 PM – 10:00 PM · Max Liquidity</div>`,
+    `<div class="ticker-item"><span class="tgreen">✦ Trade With iali_asad</span> · Pakistan's Premier Session Clock</div>`,
+    `<div class="ticker-item"><span class="tgold">📍 All times PKT</span> · UTC+5 · Updates every second</div>`,
+  ];
+  const t = document.getElementById('tickerTrack');
+  t.innerHTML = [...items,...items].join('');
+}
+
+// ──────────────────────────────────────────────
+//  UPDATE
+// ──────────────────────────────────────────────
+
+function updateMarketStatus(t) {
+  let openSessions = [];
+  let soonSessions = [];
+  SESSIONS.forEach(s => {
+    const st = sessState(t, s);
+    if(st.isActive) openSessions.push(s);
+    else if(st.openingSoon) soonSessions.push(s);
+  });
+
+  const bar  = document.getElementById('mktBar');
+  const dot  = document.getElementById('mktDot');
+  const val  = document.getElementById('mktVal');
+  const sess = document.getElementById('mktSessions');
+  const pills= document.getElementById('mktPills');
+
+  const isOpen = openSessions.length > 0;
+  bar.className = 'mkt-status-bar ' + (isOpen ? 'mkt-bar-open' : 'mkt-bar-closed');
+  dot.className  = 'mkt-big-dot ' + (isOpen ? 'dot-open' : 'dot-closed');
+  val.textContent = isOpen ? '🟢 Market Open' : '🔴 Market Closed';
+
+  if(isOpen) {
+    const names = openSessions.map(s => s.name).join(' · ');
+    sess.innerHTML = `Active: <b>${names}</b>`;
+  } else if(soonSessions.length) {
+    const names = soonSessions.map(s => s.name).join(' · ');
+    sess.innerHTML = `Opening Soon: <b>${names}</b>`;
+  } else {
+    sess.innerHTML = 'All sessions closed · Next session loading...';
+  }
+
+  // Pills for every session
+  pills.innerHTML = SESSIONS.map(s => {
+    const st = sessState(t, s);
+    let cls = 'mpill-closed', txt = 'CLOSED';
+    if(st.isActive)      { cls='mpill-open';   txt='OPEN'; }
+    else if(st.openingSoon){ cls='mpill-soon'; txt='SOON'; }
+    return `<div class="mkt-mini-pill ${cls}"><div class="mpill-dot"></div>${s.flag} ${s.name} · ${txt}</div>`;
+  }).join('');
+}
+
+function update() {
+  const t = pkt();
+  updateClock(t);
+  updateSessions(t);
+  updateMarketStatus(t);
+  updateOverlap(t);
+  checkNotifs(t);
+}
+
+function updateClock(t) {
+  const h=t.getHours(), m=pad2(t.getMinutes()), s=pad2(t.getSeconds());
+  const ampm = h<12?'AM':'PM';
+  const h12 = h===0?12:h>12?h-12:h;
+  document.getElementById('clkTime').innerHTML = `${pad2(h12)}<span class="colon">:</span>${m}<span class="colon">:</span>${s} <span class="ampm">${ampm}</span>`;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('clkDate').textContent = `${days[t.getDay()]}, ${months[t.getMonth()]} ${t.getDate()}, ${t.getFullYear()}`;
+}
+
+function updateSessions(t) {
+  let activeSessions=[], soonest=null, soonestSecs=Infinity;
+  SESSIONS.forEach(s => {
+    const st = sessState(t, s);
+    const card = document.getElementById(`sc-${s.id}`);
+    const bdg  = document.getElementById(`bdg-${s.id}`);
+    const cd   = document.getElementById(`cd-${s.id}`);
+    const cdl  = document.getElementById(`cdl-${s.id}`);
+    const pb   = document.getElementById(`pb-${s.id}`);
+
+    card.className = 'sess-card';
+    if(st.isActive) {
+      card.classList.add('ss-active');
+      bdg.className='sess-badge badge-open'; bdg.textContent='OPEN';
+      cd.textContent = fmt(st.secsToClose);
+      cdl.textContent = st.closingSoon ? '⚠ Closing Soon' : 'Closes In';
+      pb.style.width = st.progress + '%';
+      activeSessions.push({s,st});
+    } else if(st.openingSoon) {
+      card.classList.add('ss-soon');
+      bdg.className='sess-badge badge-soon'; bdg.textContent='SOON';
+      cd.textContent = fmt(st.secsToOpen);
+      cdl.textContent = '⚡ Opening Soon';
+      pb.style.width = '0%';
+    } else {
+      card.classList.add('ss-closed');
+      bdg.className='sess-badge badge-closed'; bdg.textContent='CLOSED';
+      cd.textContent = fmt(st.secsToOpen);
+      cdl.textContent = 'Opens In';
+      pb.style.width = '0%';
+    }
+    if(!st.isActive && st.secsToOpen < soonestSecs) {
+      soonestSecs = st.secsToOpen; soonest = {s, secs: st.secsToOpen};
+    }
+  });
+
+  // Active header card
+  if(activeSessions.length) {
+    const p = activeSessions[0];
+    const names = activeSessions.map(a=>a.s.name).join(' + ');
+    document.getElementById('actName').textContent = activeSessions.length>1 ? names+' Active' : p.s.full;
+    document.getElementById('actSub').textContent = p.s.mkt;
+    document.getElementById('actTimer').textContent = fmt(p.st.secsToClose);
+    document.getElementById('actTimerLbl').textContent = p.st.closingSoon ? '⚠ Closing Soon' : 'Closes In';
+    const dot = document.getElementById('liveDot');
+    dot.style.background='var(--green)'; dot.style.boxShadow='0 0 8px var(--green), 0 0 16px rgba(0,255,157,0.4)';
+  } else {
+    document.getElementById('actName').textContent = 'No Active Session';
+    document.getElementById('actSub').textContent  = 'All markets closed';
+    document.getElementById('actTimer').textContent= '--:--:--';
+    document.getElementById('actTimerLbl').textContent='Markets closed';
+    const dot = document.getElementById('liveDot');
+    dot.style.background='var(--red)'; dot.style.boxShadow='0 0 8px var(--red)';
+  }
+  if(soonest) {
+    document.getElementById('nxtName').textContent  = soonest.s.full;
+    document.getElementById('nxtSub').textContent   = `Opens at ${fmt12(soonest.s.openH, soonest.s.openM)} PKT`;
+    document.getElementById('nxtTimer').textContent = fmt(soonest.secs);
+  }
+}
+
+function updateOverlap(t) {
+  const nowMin=minsOf(t), nowSec=secsOf(t);
+  const oMin=OV.openH*60+OV.openM, cMin=OV.closeH*60+OV.closeM;
+  const oSec=OV.openH*3600+OV.openM*60, cSec=OV.closeH*3600+OV.closeM*60;
+  const ban=document.getElementById('ovBanner');
+  const icon=document.getElementById('ovIcon');
+  const title=document.getElementById('ovTitle');
+  const sub=document.getElementById('ovSub');
+  const timer=document.getElementById('ovTimer');
+  const lbl=document.getElementById('ovLabel');
+
+  if(nowMin>=oMin && nowMin<cMin) {
+    ban.className='overlap ov-active';
+    icon.textContent='🚀';
+    title.textContent='🔥 MAXIMUM LIQUIDITY — London + New York Overlap ACTIVE';
+    sub.textContent='Best time for trading · High volatility · Widest opportunities';
+    timer.textContent=fmt(Math.max(0,cSec-nowSec));
+    lbl.textContent='Ends In';
+  } else if(nowMin<oMin) {
+    ban.className='overlap ov-upcoming';
+    icon.textContent='⏳';
+    title.textContent='London + New York Overlap — Upcoming';
+    sub.textContent='06:00 PM – 10:00 PM PKT · Maximum Liquidity Period';
+    timer.textContent=fmt(Math.max(0,oSec-nowSec));
+    lbl.textContent='Starts In';
+  } else {
+    ban.className='overlap ov-ended';
+    icon.textContent='✅';
+    title.textContent='London + New York Overlap — Ended';
+    sub.textContent='Returns at 06:00 PM PKT tomorrow';
+    timer.textContent=fmt(Math.max(0,(oSec+86400)-nowSec));
+    lbl.textContent='Next In';
+  }
+}
+
+// ──────────────────────────────────────────────
+//  NOTIFICATIONS
+// ──────────────────────────────────────────────
+function requestNotifs() {
+  if(!('Notification' in window)) { toast('⚠ Notifications','Browser does not support notifications.'); return; }
+  Notification.requestPermission().then(p => {
+    notifPerm = p;
+    const btn=document.getElementById('notifBtn');
+    if(p==='granted') {
+      btn.className='notif-btn granted';
+      document.getElementById('notifIcon').textContent='🔔';
+      document.getElementById('notifTxt').textContent='Alerts Enabled';
+      toast('🔔 Alerts Enabled','You\'ll be notified at session opens, closes & high-liquidity windows.');
+    } else if(p==='denied') {
+      btn.className='notif-btn denied';
+      document.getElementById('notifIcon').textContent='🔕';
+      document.getElementById('notifTxt').textContent='Alerts Blocked';
+      toast('❌ Blocked','Enable notifications in browser settings.');
+    }
+  });
+}
+
+function checkNotifs(t) {
+  if(notifPerm!=='granted') return;
+  if(t.getSeconds()!==0) return;
+  const key = `${t.getHours()}:${t.getMinutes()}`;
+  if(fired[key]) return;
+  fired[key]=true;
+  const keys=Object.keys(fired);
+  if(keys.length>150) delete fired[keys[0]];
+  const nowMin = minsOf(t);
+  SESSIONS.forEach(s=>{
+    const oMin=s.openH*60+s.openM;
+    const cMin=(s.closeH*60+s.closeM)>1440?(s.closeH-24)*60+s.closeM:s.closeH*60+s.closeM;
+    if(nowMin===((oMin-30+1440)%1440)) sendNotif(`⏰ ${s.full}`,`${s.name} session starts in 30 minutes`);
+    if(nowMin===((oMin-15+1440)%1440)) sendNotif(`⚡ ${s.full}`,`${s.name} session starts in 15 minutes`);
+    if(nowMin===oMin) {
+      sendNotif(`🟢 ${s.full} — OPEN`,`${s.name} session is now open`);
+      if(s.id==='london')  sendNotif('🔥 London Market','London open — volume increasing');
+      if(s.id==='newyork') sendNotif('🔥 New York Market','New York open — high volatility expected');
+    }
+    if(nowMin===cMin) sendNotif(`🔴 ${s.full} — CLOSED`,`${s.name} session is now closed`);
+  });
+  if(nowMin===OV.openH*60+OV.openM) sendNotif('🚀 Maximum Liquidity','London + New York Overlap — Best time to trade');
+}
+
+function sendNotif(title,body) {
+  try{ new Notification(title,{body}); } catch(e){}
+  toast(title,body);
+}
+
+function toast(title,msg) {
+  const w=document.getElementById('toastWrap');
+  const d=document.createElement('div');
+  d.className='toast';
+  d.innerHTML=`<strong>${title}</strong>${msg}`;
+  w.appendChild(d);
+  setTimeout(()=>{ d.style.animation='tst-out 0.3s ease forwards'; setTimeout(()=>d.remove(),320); },5000);
+}
+
+// ──────────────────────────────────────────────
+//  INIT
+// ──────────────────────────────────────────────
+buildGrid();
+buildTicker();
+update();
+setInterval(update,1000);
+
+if('Notification' in window){
+  notifPerm=Notification.permission;
+  const btn=document.getElementById('notifBtn');
+  if(notifPerm==='granted'){ btn.className='notif-btn granted'; document.getElementById('notifIcon').textContent='🔔'; document.getElementById('notifTxt').textContent='Alerts Enabled'; }
+  else if(notifPerm==='denied'){ btn.className='notif-btn denied'; document.getElementById('notifIcon').textContent='🔕'; document.getElementById('notifTxt').textContent='Alerts Blocked'; }
+}
+</script>
+</body>
+</html>
